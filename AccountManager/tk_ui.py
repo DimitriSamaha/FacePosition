@@ -13,6 +13,8 @@ connector = Connector("faceposition")
 
 def sign_in():
     username_input = sign_user_entry.get()
+    if username_input[:4].lower() == "guest":
+        username_input = "Your username can't begin with guest."
     password_input = sign_pass_entry.get()
     credentials = ma.sign_in(username_input, password_input)
     # User signed in

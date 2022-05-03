@@ -1,10 +1,10 @@
 import cv2
 import random as rand
 import time
-from manage import scan_face
+from manage import add_score, scan_face
 
 
-def main():
+def main(user:str):
 
     cap = cv2.VideoCapture(0)
     ret, img = cap.read()
@@ -73,7 +73,9 @@ def main():
             # Write the score using puText()
             cv2.putText(img, "score: " + str(score), (30, 30), 1, 1, [255, 125, 0], 2)
             cv2.putText(img, "time: " + str(round((time.time()-start_time-2), 1)), (w-100, 30), 1, 1, [255, 125, 0], 2)
-
+        # Write Username
+        cv2.putText(img, f"{user}", (30,h-10), 4, 1, [255, 125, 0], 1)
+        
         # cv2 functions to display the image
         cv2.imshow('Match the position', img)
         key = cv2.waitKey(1)
@@ -90,6 +92,9 @@ def main():
         final_time = round(final_time, 1)
         # Print score at the end
         print("Your time to score 10 points was " + str(final_time) + " seconds")
+        # Cheque if user is signed in to add in sql database
+        if user[:4].lower() != "guest":
+            add_score(user, "M", final_time)
         # Display score at the end
         img[ :, :, :] = 255
         cv2.putText(img, "Your final time is : ", (int(100*1.2) , int(200*1.2)), 1, 3, [0, 0, 0], 5)
@@ -117,4 +122,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main("Guest")

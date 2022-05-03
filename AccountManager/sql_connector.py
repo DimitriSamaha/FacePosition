@@ -24,17 +24,17 @@ class Connector:
             pass
         return self.mycursor
 
-    def get_data(self, table : str, columns="") -> list:
+    def get_data(self, table : str, columns="*", column="", values="") -> list:
         """
         This function accepts one parameter, table :str.
-        Uses sql query SELECT and get the desiered data from the columns
+        Uses sql query SELECT and get the desiered data from the columns, columns in values
         return a list of the selected data
         """
         acc_list = []
-        if columns != "":
-            self.mycursor.execute(f"SELECT {columns} FROM {table}")
+        if column != "" and values != "":
+            self.mycursor.execute(f"SELECT {columns} FROM {table} WHERE {column} IN ('{values}')")
         else:
-            self.mycursor.execute(f"SELECT * FROM {table}")
+            self.mycursor.execute(f"SELECT {columns} FROM {table}")
         for x in self.mycursor:
             acc_list.append(x)
         return acc_list
@@ -70,4 +70,3 @@ class Connector:
         elif column == "" and value != "":
             return "Error, column missing"
         return self.execution(Q1)
-        

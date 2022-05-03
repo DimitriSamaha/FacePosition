@@ -1,9 +1,9 @@
 import cv2
 import time
 import  random as rand
-from manage import scan_face
+from manage import add_score, scan_face, connector
 
-def main(step=5):
+def main(user:str, step=5):
     # Initialize img
     cap = cv2.VideoCapture(0)
     ret, img = cap.read()
@@ -97,6 +97,8 @@ def main(step=5):
             
             # Write the score using puText()
             cv2.putText(img, "time: " + str(round((time.time()-start_time-2), 1)), (w-100, 30), 1, 1, [255, 125, 0], 2)
+        # Write username
+        cv2.putText(img, f"{user}", (30,h-10), 4, 1, [255, 125, 0], 1)
 
         # cv2 functions to display the image
         cv2.imshow("Follow the position", img)
@@ -112,6 +114,9 @@ def main(step=5):
         final_time = round(final_time, 1)
         # Print score at the end
         print("Your time to complete the path was " + str(final_time) + " seconds")
+        # Check if user is logged in to add score to table
+        if user[:4].lower() != "guest":
+            add_score(user, "F", final_time)
         # Display score at the end
         img[ :, :, :] = 255
         cv2.putText(img, "Your final time is : ", (int(100*1.2) , int(200*1.2)), 1, 3, [0, 0, 0], 5)
@@ -134,4 +139,4 @@ def main(step=5):
             exit()
 
 if __name__ == "__main__":
-    main()
+    main("Guest")

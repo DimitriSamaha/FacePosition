@@ -1,5 +1,10 @@
 import cv2
 
+import sys
+sys.path.append('C:\dimi_coding\FacePosition\AccountManager')
+import sql_connector
+
+connector  =  sql_connector.Connector("faceposition")
 #Load the cascade
 if hasattr(cv2, "data"):
     strPath =  cv2.data.haarcascades
@@ -33,6 +38,12 @@ def scan_face(img):
         for(x, y, w, h) in faces:
             cv2.rectangle(img, (x,y), (x+w, y+h), (255, 0, 0), 5)
         return [img, [x, y], [w, h]]
+
+
+def add_score(user : str, game : str, score : float) -> None:
+    user_id = connector.get_data("accounts", "Id", "UserName", user)[0][0]
+    connector.add_data("scores", ("UserId", "Game", "Score"), (user_id, game, score))
+    return 
 
 
 def play(user):
@@ -87,19 +98,21 @@ def play(user):
             cv2.rectangle(img, (x_2, y_1), (x_2+150, y_1+150), (0, 255, 255), 4)
 
             # Write the texts
-            cv2.putText(img, "Match", (x1+30, y-50), 1, 2, [0, 0, 0], 3)
-            cv2.putText(img, "the position", (x1, y-10), 1, 2, [0, 0, 0], 3)
+            cv2.putText(img, "Match", (x1+30, y-50), 4, 1, [0, 0, 0], 2)
+            cv2.putText(img, "the position", (x1, y-15), 4, 1, [0, 0, 0],2)
 
-            cv2.putText(img, "Follow", (x2+30, y-50), 1, 2, [0, 0, 0], 3)
-            cv2.putText(img, "the position", (x2, y-10), 1, 2, [0, 0, 0], 3)
+            cv2.putText(img, "Follow", (x2+30, y-50), 4, 1, [0, 0, 0], 2)
+            cv2.putText(img, "the position", (x2, y-15), 4, 1, [0, 0, 0], 2)
+            
+            cv2.putText(img, f"{user}", (30,30), 4, 1, [0, 0, 0], 1)
 
             # check if the face is in the rectangle drawn to change coordinates
             if len(data_list) == 3:
                 if ( abs(data_list[1][0] - x1) < 20 and abs(data_list[1][1] - y) < 20 ) or ( abs(data_list[1][0] - x_1) < 20 and abs(data_list[1][1] - y_1) < 20 ):
-                    match_pos.main()
+                    match_pos.main(user)
                     break
                 if ( abs(data_list[1][0] - x2) < 20 and abs(data_list[1][1] - y) < 20 ) or ( abs(data_list[1][0] - x_2) < 20 and abs(data_list[1][1] - y_1) < 20 ):
-                    follow_pos.main()
+                    follow_pos.main(user)
                     break
 
             cv2.imshow("Start", img)
