@@ -2,9 +2,9 @@ import cv2
 
 import sys
 sys.path.append('C:\dimi_coding\FacePosition\AccountManager')
-import sql_connector
+from sql_connector import *
 
-connector  =  sql_connector.Connector("faceposition")
+
 #Load the cascade
 if hasattr(cv2, "data"):
     strPath =  cv2.data.haarcascades
@@ -38,12 +38,6 @@ def scan_face(img):
         for(x, y, w, h) in faces:
             cv2.rectangle(img, (x,y), (x+w, y+h), (255, 0, 0), 5)
         return [img, [x, y], [w, h]]
-
-
-def add_score(user : str, game : str, score : float) -> None:
-    user_id = connector.get_data("accounts", "Id", "UserName", user)[0][0]
-    connector.add_data("scores", ("UserId", "Game", "Score"), (user_id, game, score))
-    return 
 
 
 def play(user):

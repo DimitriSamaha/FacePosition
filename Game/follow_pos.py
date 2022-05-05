@@ -1,7 +1,7 @@
 import cv2
 import time
 import  random as rand
-from manage import add_score, scan_face, connector
+from manage import add_score, scan_face
 
 def main(user:str, step=5):
     # Initialize img
